@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pose Is Not Support</title>
+<meta name="description" content="Do learned whole-body controllers follow revised support commands? A simulated yoga testbed with a goal-conditioned teacher and a distilled student, scored by pose and by support load.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pose Is Not Support: Do Learned Whole-Body Controllers Follow Revised Support Commands?">
+<meta property="og:description" content="A simulated yoga testbed with a goal-conditioned teacher and a distilled student, tested on commands revised mid-skill and scored by pose and by support load.">
+<meta property="og:url" content="https://visakk.github.io/pose-is-not-support/">
+<meta property="og:image" content="https://visakk.github.io/pose-is-not-support/assets/img/poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300897B'/%3E%3Ccircle cx='16' cy='9' r='3.2' fill='white'/%3E%3Cpath d='M16 13v8M10 26l6-5 6 5M9 16h14' stroke='white' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f7f8;
+    --ink: #1c2732;
+    --muted: #5b6874;
+    --rule: #dde3e7;
+    --teal: #00897b;
+    --teal-ink: #006b60;
+    --amber: #a66920;
+    --button: #1c2732;
+    --button-ink: #ffffff;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1418;
+      --surface: #172027;
+      --ink: #e6edf2;
+      --muted: #9aa8b4;
+      --rule: #2a3640;
+      --teal: #3fb8a8;
+      --teal-ink: #5fd0c0;
+      --amber: #e0a050;
+      --button: #e6edf2;
+      --button-ink: #0f1418;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+  header { text-align: center; padding: 56px 0 28px; }
+  h1 { font-size: clamp(1.7rem, 4.2vw, 2.55rem); line-height: 1.2; margin: 0 0 22px; letter-spacing: -0.01em; }
+  h1 .sub { display: block; font-weight: 500; font-size: 0.72em; color: var(--muted); margin-top: 6px; }
+  .author { font-size: 1.15rem; font-weight: 600; margin: 0; }
+  .affil, .venue { color: var(--muted); margin: 2px 0 0; }
+  .venue { font-size: 0.95rem; margin-top: 10px; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 24px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: 999px;
+    background: var(--button); color: var(--button-ink);
+    text-decoration: none; font-weight: 600; font-size: 0.95rem;
+    transition: opacity .15s ease;
+  }
+  .btn:hover { opacity: 0.82; }
+  .btn svg { width: 17px; height: 17px; }
+  .teaser { margin: 8px 0 0; }
+  .teaser video, .player video { width: 100%; display: block; border-radius: 12px; background: #0e1116; }
+  figcaption, .caption { color: var(--muted); font-size: 0.92rem; margin-top: 10px; line-height: 1.5; }
+  section { padding: 34px 0 6px; }
+  h2 { font-size: 1.55rem; margin: 0 0 14px; letter-spacing: -0.005em; }
+  h3 { font-size: 1.15rem; margin: 30px 0 8px; }
+  p { margin: 0 0 14px; }
+  @media (min-width: 700px) { .abstract p { text-align: justify; hyphens: auto; } }
+  .chapters { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .chapters button {
+    width: 100%; text-align: left; cursor: pointer;
+    display: flex; gap: 12px; align-items: baseline;
+    padding: 9px 12px; border-radius: 9px;
+    border: 1px solid var(--rule); background: var(--surface); color: var(--ink);
+    font: inherit; font-size: 0.93rem; line-height: 1.35;
+  }
+  .chapters button:hover, .chapters button.on { border-color: var(--teal); }
+  .chapters button.on { box-shadow: inset 3px 0 0 var(--teal); }
+  .chapters .t { font-variant-numeric: tabular-nums; color: var(--teal-ink); font-weight: 600; min-width: 2.6em; }
+  .card { background: #ffffff; border: 1px solid var(--rule); border-radius: 12px; padding: 14px; }
+  .card img { width: 100%; height: auto; display: block; }
+  figure { margin: 18px 0 8px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+  .num { font-variant-numeric: tabular-nums; }
+  .tablewrap { overflow-x: auto; margin: 16px 0 6px; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 0.93rem; }
+  th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--rule); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { color: var(--muted); font-weight: 600; border-bottom: 2px solid var(--rule); }
+  tr.group td { color: var(--muted); font-style: italic; text-align: left; padding-top: 14px; }
+  td.fail { color: var(--amber); font-weight: 600; }
+  @media (max-width: 560px) {
+    table { min-width: 0; font-size: 0.82rem; }
+    th, td { padding: 5px 5px; }
+  }
+  .callout { border-left: 3px solid var(--teal); background: var(--surface); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 16px 0; }
+  .gallery img { width: 100%; height: auto; display: block; border-radius: 10px; }
+  .gallery figure + figure { margin-top: 10px; }
+  pre {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 16px; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 0;
+  }
+  .bib { position: relative; }
+  .copy {
+    position: absolute; top: 10px; right: 10px; cursor: pointer;
+    font: inherit; font-size: 0.8rem; padding: 4px 10px; border-radius: 7px;
+    border: 1px solid var(--rule); background: var(--bg); color: var(--ink);
+  }
+  a { color: var(--teal-ink); }
+  footer { color: var(--muted); font-size: 0.88rem; padding: 34px 0 48px; border-top: 1px solid var(--rule); margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Pose Is Not Support
+    <span class="sub">Do Learned Whole-Body Controllers Follow Revised Support Commands?</span></h1>
+  <p class="author">Visak Kumar</p>
+  <p class="affil">Independent Researcher, San Francisco, CA</p>
+  <p class="venue">Workshop submission &middot; CoRL 2026 Workshop on Open Problems in Contact-Rich Loco-Manipulation</p>
+  <div class="buttons">
+    <a class="btn" href="assets/pose_is_not_support.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+      Paper (PDF)</a>
+    <a class="btn" href="#video">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg>
+      Video</a>
+    <a class="btn" href="#bibtex">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4H7zM13 7h4v4h-4zM7 11c0 3-1 5-3 6M13 11c0 3-1 5-3 6"/></svg>
+      BibTeX</a>
+  </div>
+</header>
+
+<figure class="teaser">
+  <video src="assets/video/teaser.mp4" poster="assets/img/teaser_poster.jpg" autoplay muted loop playsinline
+         aria-label="Holds performed by the teacher policy in simulation"></video>
+  <figcaption>Holds performed by the goal-conditioned teacher in simulation (Isaac Lab / PhysX), on a humanoid rebuilt
+    from the performer's skeleton: handstand, handstand scorpion, crow, side crow, firefly, Eka Pada Koundinyasana,
+    forearm stand, and Lord of the Dance.</figcaption>
+</figure>
+
+<section class="abstract">
+  <h2>Abstract</h2>
+  <p>Contact-rich loco-manipulation requires whole-body controllers to change which limbs bear weight when a planner
+    or user revises a goal. Evaluating familiar motion sequences by pose accuracy does not establish whether a
+    controller follows such revisions or loads the requested supports. We examine both properties in a simulated yoga
+    testbed with human arm balances, inversions, and single-leg balances, supplemented by five synthesized
+    transitions. A goal-conditioned PPO teacher executes all five transitions after arrivals through human clips. A
+    student distilled to accept partial pose-and-contact goals shows a strong timing dependence: crow-to-plank succeeds
+    on 41 of 42 replicas when the continuation appears as the crow becomes the active goal, but on none of 31 when it
+    appears during the crow hold. Its training schedule contains no such within-hold revision. Separately, pose-only
+    scoring exceeds the teacher's own-route pose-and-load success by about 20 percentage points, entirely through
+    failures of requested-support loading. Across student checkpoints, own-route scores peak while command success
+    regresses. These results show the value of evaluating command timing and support realization alongside
+    familiar-route performance, and motivate training with revised continuations and explicit support-attainment
+    objectives.</p>
+</section>
+
+<section id="video">
+  <h2>Supplementary video</h2>
+  <div class="player">
+    <video id="sv" controls preload="metadata" playsinline poster="assets/img/poster.jpg">
+      <source src="assets/video/pose_is_not_support_supplementary.mp4" type="video/mp4">
+      Your browser cannot play this video. <a href="assets/video/pose_is_not_support_supplementary.mp4">Download it (MP4)</a>.
+    </video>
+  </div>
+  <p class="caption">4:50, silent, 1080p. Grey is the simulated policy; green, drawn beside it, is what it is asked to
+    do. Captions give rates over replicas of the same plan. Chapters:</p>
+  <ul class="chapters">
+    <li><button data-t="0"><span class="t">0:00</span><span>Title</span></button></li>
+    <li><button data-t="8"><span class="t">0:08</span><span>Highlights: holds the teacher performs</span></button></li>
+    <li><button data-t="23.7"><span class="t">0:24</span><span>1 &middot; Testbed and policies</span></button></li>
+    <li><button data-t="43.2"><span class="t">0:43</span><span>2 &middot; The teacher composes across clips</span></button></li>
+    <li><button data-t="91"><span class="t">1:31</span><span>3 &middot; Fluid flows</span></button></li>
+    <li><button data-t="182.9"><span class="t">3:03</span><span>4 &middot; The student: skill transfer and command timing</span></button></li>
+    <li><button data-t="245.8"><span class="t">4:06</span><span>5 &middot; Pose is not support</span></button></li>
+    <li><button data-t="263.8"><span class="t">4:24</span><span>6 &middot; Own-route scores miss a command regression</span></button></li>
+    <li><button data-t="273.3"><span class="t">4:33</span><span>Takeaways</span></button></li>
+  </ul>
+  <p class="caption"><a href="assets/video/pose_is_not_support_supplementary.mp4" download>Download the video (MP4, 41&nbsp;MB)</a></p>
+</section>
+
+<section>
+  <h2>Testbed and policies</h2>
+  <p>The capture contains 56 yoga clips of one performer in 37 pose families: arm balances, inversions, single-leg
+    balances, and connective poses. Each clip performs one pose as a round trip from standing, so no clip moves between
+    two poses. We annotate each clip as a sequence of holds whose contact configurations form a graph, repair the
+    references so that labeled supports touch the floor on a body rebuilt from the performer's skeleton, and
+    synthesize five transitions that no clip contains with MPPI in the training simulator: crow to handstand and back,
+    crow to plank, and crow and handstand to chaturanga.</p>
+  <p>A goal-conditioned PPO teacher reads two fully specified hold goals. A student, distilled from it with online
+    teacher labels, reads five goal slots with partial poses and explicit contact requests. Both are tested on each
+    clip's own route and on continuations commanded from other clips at the poses they share.</p>
+  <figure>
+    <div class="card"><img src="assets/img/fig_system.png" alt="System overview: a curated graph of human clips and synthesized edges trains a teacher, whose labels train a student; both are tested on own routes and on commands from other clips." loading="lazy"></div>
+    <figcaption>Curated goals and synthesized edges train a teacher, whose labels train a student; both are tested on own
+      routes and on commands from other clips at shared poses.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Findings</h2>
+
+  <h3>The teacher follows revised support commands</h3>
+  <p>After arriving at a shared pose through a human clip, the teacher executes all five synthesized transitions with
+    source and destination satisfied on every replica, and completes the chain crow, handstand, crow, chaturanga. A
+    target succeeds when the six-body pose is within 0.15&nbsp;m, every requested ground zone carries at least 5&nbsp;N on
+    90% of the hold frames, and no unrequested zone carries 3% of body weight on 20% of them. <em>Switch</em> shows the new continuation once the hub's hold has
+    begun; <em>approach</em> shows it when the hub becomes the active goal.</p>
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Destination after a human arrival</th><th>Teacher, switch</th><th>Teacher, approach</th><th>Student, switch</th><th>Student, approach</th></tr>
+      </thead>
+      <tbody class="num">
+        <tr><td>Crow &rarr; handstand (press)</td><td>31/31</td><td>42/42</td><td>31/31</td><td>42/42</td></tr>
+        <tr><td>Crow &rarr; plank (jump)</td><td>31/31</td><td>42/42</td><td class="fail">0/31</td><td>41/42</td></tr>
+        <tr><td>Crow &rarr; chaturanga</td><td>31/31</td><td>42/42</td><td class="fail">0/31</td><td class="fail">0/42</td></tr>
+        <tr><td>Handstand &rarr; crow</td><td>31/31</td><td>42/42</td><td>10/31</td><td>18/42</td></tr>
+        <tr><td>Handstand &rarr; chaturanga</td><td>31/31</td><td>42/42</td><td>27/31</td><td>37/42</td></tr>
+        <tr><td>Side-crow squat &rarr; side crow (within family)</td><td>31/31</td><td>42/42</td><td class="fail">0/31</td><td>40/42</td></tr>
+        <tr class="group"><td colspan="5">Mean target success by plan group</td></tr>
+        <tr><td>New-edge hubs and controls</td><td>1.000</td><td>1.000</td><td>.786</td><td>.876</td></tr>
+        <tr><td>Multi-hop chains</td><td>.933</td><td>.952</td><td>.561</td><td>.615</td></tr>
+        <tr><td>Flows joined at standing</td><td>.836</td><td>.513</td><td>.305</td><td>.310</td></tr>
+        <tr><td>Within-family alternates</td><td>.747</td><td>.571</td><td>.297</td><td>.279</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="caption">Commands from another clip (Table&nbsp;II of the paper). All runs reissue goals every 0.25&nbsp;s.</p>
+
+  <h3>The student's response depends on when the command arrives</h3>
+  <div class="two">
+    <div>
+      <p>With goal poses, deadlines and dwell held fixed, the student's jump from crow to plank succeeds on 41 of 42
+        replicas when the plank appears as the crow becomes the active goal, and on none of 31 when it appears during
+        the crow hold: it stands up instead, the human crow clip's own exit. Commands during a hold are not ignored
+        in general; the press, commanded during the same hold, succeeds on 31 of 31.</p>
+      <p>In training, a continuation never changes while its segment is in progress, and the student's 2&nbsp;s of pose
+        history and contact events could identify the playing clip and its usual continuation, a possible source of
+        causal confusion.</p>
+    </div>
+    <figure style="margin-top:0">
+      <div class="card"><img src="assets/img/fig_command_timing.png" alt="Diagram of when the plank goal enters the student's goal window: from the clip start in training, at the active-goal change under approach (41 of 42 succeed), and during the crow hold under switch (0 of 31 succeed)." loading="lazy"></div>
+      <figcaption>When the plank enters the student's goal window after the human crow route.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Pose is not support</h3>
+  <p>On its own routes, the teacher passes the pose criterion on .972 of target replicas but the full rule on .777.
+    All 248 replicas in the gap fail a requested-support load condition, in eight families: the thighs in cobra, the
+    hands in the forearm stand, the trunk in plow and shoulderstand, the head in Koundinya. In every fully recorded
+    replica these supports stay within 2&nbsp;cm of the floor, so a touch test passes them too; only load separates
+    them. The teacher's reward penalizes load on zones
+    that should be free but gives requested-support attainment zero weight.</p>
+  <figure>
+    <div class="card"><img src="assets/img/fig_pose_vs_support.png" alt="Two teacher holds rendered from recorded states: crow, where the hands carry the body's weight, and cobra, where the pose matches within 3 cm but the thighs carry 0 newtons and hover millimetres above the floor." loading="lazy"></div>
+    <figcaption>What a pose-only pass hides. (a) Crow: the hands carry the body's weight. (b) Cobra: the pose matches
+      as closely (3&nbsp;cm), but the thighs carry 0&nbsp;N on every frame of all 31 replicas and sit 3&ndash;8&nbsp;mm above the
+      floor.</figcaption>
+  </figure>
+
+  <h3>Own-route scores miss a command regression</h3>
+  <div class="two">
+    <figure style="margin-top:0">
+      <div class="card"><img src="assets/img/fig_scores.png" alt="Left: share of own-route target replicas passing pose alone versus the full rule for teacher and student. Right: across student checkpoints, own-route scores rise while mean success on 19 command plans falls." loading="lazy"></div>
+      <figcaption>(a) Pose-only versus full-rule success on own routes. (b) Across student checkpoints, own-route
+        scores peak where command success is lowest.</figcaption>
+    </figure>
+    <div>
+      <p>Between two later student checkpoints, own-route passing plans rise from 33 to 39 by pose and from 25 to 32
+        with support checks on the same rollouts, while mean success on 19 command plans falls from .583 to .173.
+        Own-route scores, even support-aware, did not predict command following; support-scored command probes can
+        complement them when selecting checkpoints.</p>
+      <div class="callout">The teacher also chains poses taken from different clips into fluid flows that no capture
+        contains, such as downdog, plank, side plank and back, or Lord of the Dance, Warrior&nbsp;III, standing split.
+        They are not reported in the paper; see <a href="#video" data-jump="91">chapter 3 of the video</a>.</div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery">
+  <h2>Gallery</h2>
+  <figure>
+    <img src="assets/img/gallery_teacher.jpg" alt="Teacher holds: handstand, handstand scorpion, crow, side crow, firefly, Eka Pada Koundinyasana." loading="lazy">
+    <figcaption>Teacher.</figcaption>
+  </figure>
+  <figure>
+    <img src="assets/img/gallery_student.jpg" alt="Student holds from the same plans and cameras: handstand, handstand scorpion, crow, side crow, firefly, Eka Pada Koundinyasana." loading="lazy">
+    <figcaption>Student, from the same plans and cameras. Frames illustrate the repertoire; the paper reports
+      pose-and-support success over the scored holds.</figcaption>
+  </figure>
+</section>
+
+<section id="bibtex">
+  <h2>BibTeX</h2>
+  <div class="bib">
+    <button class="copy" type="button">Copy</button>
+<pre id="bibtext">@misc{kumar2026pose,
+  title        = {Pose Is Not Support: Do Learned Whole-Body Controllers Follow
+                  Revised Support Commands?},
+  author       = {Kumar, Visak},
+  year         = {2026},
+  howpublished = {CoRL 2026 Workshop on Open Problems in Contact-Rich
+                  Loco-Manipulation (submission)},
+  url          = {https://visakk.github.io/pose-is-not-support/}
+}</pre>
+  </div>
+</section>
+
+<footer>
+  All results are in simulation (Isaac Lab / PhysX). Motion capture from MOYO (Tripathi et al., CVPR 2023); policies
+  trained with ProtoMotions.
+</footer>
+
+</div>
+<script>
+  (function () {
+    var v = document.getElementById('sv');
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.chapters button'));
+    function seek(t) {
+      v.currentTime = t;
+      var p = v.play();
+      if (p && p.catch) { p.catch(function () {}); }
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () { seek(parseFloat(b.dataset.t)); });
+    });
+    document.querySelectorAll('[data-jump]').forEach(function (a) {
+      a.addEventListener('click', function () { seek(parseFloat(a.dataset.jump)); });
+    });
+    v.addEventListener('timeupdate', function () {
+      var cur = null;
+      buttons.forEach(function (b) { if (v.currentTime >= parseFloat(b.dataset.t) - 0.05) { cur = b; } });
+      buttons.forEach(function (b) { b.classList.toggle('on', b === cur); });
+    });
+    var teaser = document.querySelector('.teaser video');
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      teaser.removeAttribute('autoplay');
+      teaser.pause();
+      teaser.controls = true;
+    }
+    var copy = document.querySelector('.copy');
+    copy.addEventListener('click', function () {
+      var text = document.getElementById('bibtext').textContent;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function () {
+          copy.textContent = 'Copied';
+          setTimeout(function () { copy.textContent = 'Copy'; }, 1500);
+        });
+      }
+    });
+  })();
+</script>
+</body>
+</html>
