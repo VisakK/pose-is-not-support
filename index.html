@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pose Is Not Support</title>
-<meta name="description" content="Do learned whole-body controllers follow revised support commands? A simulated yoga testbed with a goal-conditioned teacher and a distilled student, scored by pose and by support load.">
+<title>Goal Revisions and Support Failures</title>
+<meta name="description" content="A simulated humanoid learns contact-rich yoga skills from motion capture. Revising goals during distillation teaches a student to compose them; meeting revised deadlines and loading requested supports remain open.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Pose Is Not Support: Do Learned Whole-Body Controllers Follow Revised Support Commands?">
-<meta property="og:description" content="A simulated yoga testbed with a goal-conditioned teacher and a distilled student, tested on commands revised mid-skill and scored by pose and by support load.">
+<meta property="og:title" content="Goal Revisions and Support Failures in Contact-Rich Whole-Body Skill Composition">
+<meta property="og:description" content="A simulated humanoid learns contact-rich yoga skills from motion capture. Revising goals during distillation teaches a student to compose them; meeting revised deadlines and loading requested supports remain open.">
 <meta property="og:url" content="https://visakk.github.io/pose-is-not-support/">
-<meta property="og:image" content="https://visakk.github.io/pose-is-not-support/assets/img/poster.jpg">
+<meta property="og:image" content="https://visakk.github.io/pose-is-not-support/assets/img/video_poster.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300897B'/%3E%3Ccircle cx='16' cy='9' r='3.2' fill='white'/%3E%3Cpath d='M16 13v8M10 26l6-5 6 5M9 16h14' stroke='white' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 <style>
@@ -124,13 +124,12 @@
 <div class="wrap">
 
 <header>
-  <h1>Pose Is Not Support
-    <span class="sub">Do Learned Whole-Body Controllers Follow Revised Support Commands?</span></h1>
+  <h1>Goal Revisions and Support Failures in Contact&#8209;Rich Whole&#8209;Body Skill Composition</h1>
   <p class="author">Visak Kumar</p>
   <p class="affil">San Francisco</p>
   <p class="venue">Workshop submission &middot; CoRL 2026 Workshop on Open Problems in Contact-Rich Loco-Manipulation</p>
   <div class="buttons">
-    <a class="btn" href="assets/pose_is_not_support.pdf">
+    <a class="btn" href="assets/goal_revisions_support_failures.pdf">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
       Paper (PDF)</a>
     <a class="btn" href="#video">
@@ -143,151 +142,144 @@
 </header>
 
 <figure class="teaser">
-  <video src="assets/video/teaser.mp4" poster="assets/img/teaser_poster.jpg" autoplay muted loop playsinline
-         aria-label="Holds performed by the teacher policy in simulation"></video>
-  <figcaption>Holds performed by the goal-conditioned teacher in simulation (Isaac Lab / PhysX), on a humanoid rebuilt
-    from the performer's skeleton: handstand, handstand scorpion, crow, side crow, firefly, Eka Pada Koundinyasana,
-    forearm stand, and Lord of the Dance.</figcaption>
+  <video src="assets/video/teaser_class.mp4" poster="assets/img/teaser_class_poster.jpg" autoplay muted loop playsinline
+         aria-label="A yoga class in simulation: the teacher policy leads 18 rollouts of the distilled student through arm balances"></video>
+  <figcaption>A yoga class in simulation (Isaac Lab / PhysX), one take. The teacher policy (orange) faces 18 rollouts
+    of the distilled student (blue). Front row: crow, press to handstand, back to crow; middle row: kick up to
+    handstand, lower to crow; back row: crow, side crow, firefly, and jumps back to plank and chaturanga. Each
+    performer receives its own commands; none observes the others.</figcaption>
 </figure>
 
 <section class="abstract">
   <h2>Abstract</h2>
-  <p>Contact-rich loco-manipulation requires whole-body controllers to change which limbs bear weight when a planner
-    or user revises a goal. Evaluating familiar motion sequences by pose accuracy does not establish whether a
-    controller follows such revisions or loads the requested supports. We examine both properties in a simulated yoga
-    testbed with human arm balances, inversions, and single-leg balances, supplemented by five synthesized
-    transitions. A goal-conditioned PPO teacher executes all five transitions after arrivals through human clips. A
-    student distilled to accept partial pose-and-contact goals shows a strong timing dependence: crow-to-plank succeeds
-    on 41 of 42 replicas when the continuation appears as the crow becomes the active goal, but on none of 31 when it
-    appears during the crow hold. Its training schedule contains no such within-hold revision. Separately, pose-only
-    scoring exceeds the teacher's own-route pose-and-load success by about 20 percentage points, entirely through
-    failures of requested-support loading. Across student checkpoints, own-route scores peak while command success
-    regresses. These results show the value of evaluating command timing and support realization alongside
-    familiar-route performance, and motivate training with revised continuations and explicit support-attainment
-    objectives.</p>
+  <p>Contact-rich loco-manipulation requires a whole-body controller to change which limbs carry its weight as a task unfolds, often after the next movement has been revised. A controller that performs two skills individually may still fail when the second is requested during the first. We study this gap in a simulated yoga repertoire of arm balances, inversions, and single-leg supports, distilled online from a privileged teacher into a student that accepts partial pose-and-contact goals. During distillation, we replace a clip's continuation with a compatible alternative at randomized times, preserving physical state and history, while the teacher, student architecture, and objective stay fixed. Across two fine-tuning seeds per condition, completion of all designated targets in multi-hop chains reaches 65% and 79%, versus below 1% and 18% without switches, and sequences through standing pairings excluded from switch training reach 32% and 21%, versus zero for both controls, while familiar-route success stays near 66%. A reveal-time sweep separates two remaining failures: returning to the original continuation and arriving after the deadline. Requested-support failures persist after switching: pose-only success exceeds pose-and-load success by 14–16 percentage points in the switched students and by 19.5 in the teacher.</p>
 </section>
 
 <section id="video">
   <h2>Supplementary video</h2>
   <div class="player">
-    <video id="sv" controls preload="metadata" playsinline poster="assets/img/poster.jpg">
-      <source src="assets/video/pose_is_not_support_supplementary.mp4" type="video/mp4">
-      Your browser cannot play this video. <a href="assets/video/pose_is_not_support_supplementary.mp4">Download it (MP4)</a>.
+    <video id="sv" controls preload="metadata" playsinline poster="assets/img/video_poster.jpg">
+      <source src="assets/video/supplementary_video.mp4" type="video/mp4">
+      Your browser cannot play this video. <a href="assets/video/supplementary_video.mp4">Download it (MP4)</a>.
     </video>
   </div>
-  <p class="caption">4:50, silent, 1080p. Grey is the simulated policy; green, drawn beside it, is what it is asked to
-    do. Captions give rates over replicas of the same plan. Chapters:</p>
+  <p class="caption">6:20, silent, 1080p. Side by side: the teacher (left) and the student (right) on the same
+    commands; green, drawn beside each, is what it is asked to do. Rates in the captions are over replicas, repeated
+    rollouts of the same plan. Chapters:</p>
   <ul class="chapters">
     <li><button data-t="0"><span class="t">0:00</span><span>Title</span></button></li>
-    <li><button data-t="8"><span class="t">0:08</span><span>Highlights: holds the teacher performs</span></button></li>
-    <li><button data-t="23.7"><span class="t">0:24</span><span>1 &middot; Testbed and policies</span></button></li>
-    <li><button data-t="43.2"><span class="t">0:43</span><span>2 &middot; The teacher composes across clips</span></button></li>
-    <li><button data-t="91"><span class="t">1:31</span><span>3 &middot; Fluid flows</span></button></li>
-    <li><button data-t="182.9"><span class="t">3:03</span><span>4 &middot; The student: skill transfer and command timing</span></button></li>
-    <li><button data-t="245.8"><span class="t">4:06</span><span>5 &middot; Pose is not support</span></button></li>
-    <li><button data-t="263.8"><span class="t">4:24</span><span>6 &middot; Own-route scores miss a command regression</span></button></li>
-    <li><button data-t="273.3"><span class="t">4:33</span><span>Takeaways</span></button></li>
+    <li><button data-t="9"><span class="t">0:09</span><span>A yoga class in simulation</span></button></li>
+    <li><button data-t="46.5"><span class="t">0:46</span><span>1 Skills: teacher and student</span></button></li>
+    <li><button data-t="82"><span class="t">1:22</span><span>2 Composing skills: revised-goal collection</span></button></li>
+    <li><button data-t="96"><span class="t">1:36</span><span>Arm-balance chains</span></button></li>
+    <li><button data-t="133.8"><span class="t">2:14</span><span>3 Flows through new standing pairings</span></button></li>
+    <li><button data-t="222.9"><span class="t">3:43</span><span>Fluid flows</span></button></li>
+    <li><button data-t="314.7"><span class="t">5:15</span><span>What switch training changes</span></button></li>
+    <li><button data-t="341"><span class="t">5:41</span><span>4 Pose is not support</span></button></li>
+    <li><button data-t="360"><span class="t">6:00</span><span>Takeaways</span></button></li>
   </ul>
-  <p class="caption"><a href="assets/video/pose_is_not_support_supplementary.mp4" download>Download the video (MP4, 41&nbsp;MB)</a></p>
+  <p class="caption"><a href="assets/video/supplementary_video.mp4" download>Download the video (MP4, 45&nbsp;MB)</a></p>
 </section>
 
 <section>
-  <h2>Testbed and policies</h2>
-  <p>The capture contains 56 yoga clips of one performer in 37 pose families: arm balances, inversions, single-leg
-    balances, and connective poses. Each clip performs one pose as a round trip from standing, so no clip moves between
-    two poses. We annotate each clip as a sequence of holds whose contact configurations form a graph, repair the
-    references so that labeled supports touch the floor on a body rebuilt from the performer's skeleton, and
-    synthesize five transitions that no clip contains with MPPI in the training simulator: crow to handstand and back,
-    crow to plank, and crow and handstand to chaturanga.</p>
-  <p>A goal-conditioned PPO teacher reads two fully specified hold goals. A student, distilled from it with online
-    teacher labels, reads five goal slots with partial poses and explicit contact requests. Both are tested on each
-    clip's own route and on continuations commanded from other clips at the poses they share.</p>
+  <h2>Composing skills with revised goals</h2>
+  <p>The student is distilled online from a frozen teacher that labels every state the student visits. Trained clip by
+    clip, an arrival at a hold is always followed by the same continuation. Switch collection replaces the rest of a
+    clip with a compatible continuation from another clip, at standing, at holds that clips share such as crow and
+    handstand, at the ends of synthesized transitions, or between two recordings of one pose, while the physical state
+    and history carry on. The goals, the teacher's labels, and the tracked reference all follow the new clip. Two
+    switch and two no-switch fine-tuning runs start from the same student and share everything else.</p>
   <figure>
-    <div class="card"><img src="assets/img/fig_system.png" alt="System overview: a curated graph of human clips and synthesized edges trains a teacher, whose labels train a student; both are tested on own routes and on commands from other clips." loading="lazy"></div>
-    <figcaption>Curated goals and synthesized edges train a teacher, whose labels train a student; both are tested on own
-      routes and on commands from other clips at shared poses.</figcaption>
+    <div class="card"><img src="assets/img/fig_composition_stills.png" alt="Nine frames of one student rollout that joins five clips: Warrior II, standing, crow, a press to handstand, handstand, a lowering, crow, standing, and tree." loading="lazy"></div>
+    <figcaption>One rollout of a switch-trained student following a plan that joins five clips without resetting the
+      simulation: Warrior II, crow, a synthesized press to handstand, a synthesized lowering back to crow, and tree.
+      Bars mark the clip that supplies the goals; the plan's two standing pairings were held out of switch training.
+      Over 409 rollouts of this plan, this student completes all of it in 258, the other switch-trained seed in 23, and
+      the initial student in none.</figcaption>
   </figure>
-</section>
-
-<section>
-  <h2>Findings</h2>
-
-  <h3>The teacher follows revised support commands</h3>
-  <p>After arriving at a shared pose through a human clip, the teacher executes all five synthesized transitions with
-    source and destination satisfied on every replica, and completes the chain crow, handstand, crow, chaturanga. A
-    target succeeds when the six-body pose is within 0.15&nbsp;m, every requested ground zone carries at least 5&nbsp;N on
-    90% of the hold frames, and no unrequested zone carries 3% of body weight on 20% of them. <em>Switch</em> shows the new continuation once the hub's hold has
-    begun; <em>approach</em> shows it when the hub becomes the active goal.</p>
+  <p>Switch collection raises all-target completion of the standing flows from zero to 32% and 21%, while both
+    no-switch controls stay at zero throughout fine-tuning. Multi-hop chains reach 65% and 79% against below 1% and
+    18%, and familiar-route success stays near its initial 66%. Standing is the most frequent switch site in training,
+    and every clip in a held-out pairing appears in the same role in trained pairings, so this is transfer to new
+    pairings at a familiar hub rather than to a new kind of junction.</p>
   <div class="tablewrap">
     <table>
       <thead>
-        <tr><th>Destination after a human arrival</th><th>Teacher, switch</th><th>Teacher, approach</th><th>Student, switch</th><th>Student, approach</th></tr>
+        <tr><th></th><th>Teacher</th><th>Initial student</th><th>No switch, seed&nbsp;0</th><th>No switch, seed&nbsp;1</th><th>Switch, seed&nbsp;0</th><th>Switch, seed&nbsp;1</th></tr>
       </thead>
       <tbody class="num">
-        <tr><td>Crow &rarr; handstand (press)</td><td>31/31</td><td>42/42</td><td>31/31</td><td>42/42</td></tr>
-        <tr><td>Crow &rarr; plank (jump)</td><td>31/31</td><td>42/42</td><td class="fail">0/31</td><td>41/42</td></tr>
-        <tr><td>Crow &rarr; chaturanga</td><td>31/31</td><td>42/42</td><td class="fail">0/31</td><td class="fail">0/42</td></tr>
-        <tr><td>Handstand &rarr; crow</td><td>31/31</td><td>42/42</td><td>10/31</td><td>18/42</td></tr>
-        <tr><td>Handstand &rarr; chaturanga</td><td>31/31</td><td>42/42</td><td>27/31</td><td>37/42</td></tr>
-        <tr><td>Side-crow squat &rarr; side crow (within family)</td><td>31/31</td><td>42/42</td><td class="fail">0/31</td><td>40/42</td></tr>
-        <tr class="group"><td colspan="5">Mean target success by plan group</td></tr>
-        <tr><td>New-edge hubs and controls</td><td>1.000</td><td>1.000</td><td>.786</td><td>.876</td></tr>
-        <tr><td>Multi-hop chains</td><td>.933</td><td>.952</td><td>.561</td><td>.615</td></tr>
-        <tr><td>Flows joined at standing</td><td>.836</td><td>.513</td><td>.305</td><td>.310</td></tr>
-        <tr><td>Within-family alternates</td><td>.747</td><td>.571</td><td>.297</td><td>.279</td></tr>
+        <tr><td>Standing flows: all targets</td><td>.574</td><td>.000</td><td>.000</td><td>.000</td><td>.320</td><td>.213</td></tr>
+        <tr><td>Standing flows: second-clip target</td><td>.755</td><td>.011</td><td>.000</td><td>.001</td><td>.558</td><td>.409</td></tr>
+        <tr><td>Multi-hop chains: all targets</td><td>.800</td><td>.118</td><td>.007</td><td>.184</td><td>.649</td><td>.786</td></tr>
+        <tr><td>Five revised destinations</td><td>1.000</td><td>.431</td><td>.285</td><td>.671</td><td>.784</td><td>.944</td></tr>
+        <tr><td>Familiar-route target success</td><td>.777</td><td>.663</td><td>.567</td><td>.690</td><td>.666</td><td>.665</td></tr>
+        <tr><td>Familiar-route pose-only success</td><td>.972</td><td>.820</td><td>.681</td><td>.865</td><td>.810</td><td>.823</td></tr>
+        <tr><td>Familiar-route passing plans</td><td>32/41</td><td>27/41</td><td>25/41</td><td>28/41</td><td>29/41</td><td>28/41</td></tr>
       </tbody>
     </table>
   </div>
-  <p class="caption">Commands from another clip (Table&nbsp;II of the paper). All runs reissue goals every 0.25&nbsp;s.</p>
-
-  <h3>The student's response depends on when the command arrives</h3>
-  <div class="two">
-    <div>
-      <p>With goal poses, deadlines and dwell held fixed, the student's jump from crow to plank succeeds on 41 of 42
-        replicas when the plank appears as the crow becomes the active goal, and on none of 31 when it appears during
-        the crow hold: it stands up instead, the human crow clip's own exit. Commands during a hold are not ignored
-        in general; the press, commanded during the same hold, succeeds on 31 of 31.</p>
-      <p>In training, a continuation never changes while its segment is in progress, and the student's 2&nbsp;s of pose
-        history and contact events could identify the playing clip and its usual continuation, a possible source of
-        causal confusion.</p>
-    </div>
-    <figure style="margin-top:0">
-      <div class="card"><img src="assets/img/fig_command_timing.png" alt="Diagram of when the plank goal enters the student's goal window: from the clip start in training, at the active-goal change under approach (41 of 42 succeed), and during the crow hold under switch (0 of 31 succeed)." loading="lazy"></div>
-      <figcaption>When the plank enters the student's goal window after the human crow route.</figcaption>
-    </figure>
-  </div>
-
-  <h3>Pose is not support</h3>
-  <p>On its own routes, the teacher passes the pose criterion on .972 of target replicas but the full rule on .777.
-    All 248 replicas in the gap fail a requested-support load condition, in eight families: the thighs in cobra, the
-    hands in the forearm stand, the trunk in plow and shoulderstand, the head in Koundinya. In every fully recorded
-    replica these supports stay within 2&nbsp;cm of the floor, so a touch test passes them too; only load separates
-    them. The teacher's reward penalizes load on zones
-    that should be free but gives requested-support attainment zero weight.</p>
+  <p class="caption">Composition and familiar-route performance at the same fine-tuning budget. Rates use the
+    pose-and-load rule except the pose-only row; &ldquo;all targets&rdquo; requires every designated hold to pass in
+    one rollout. The teacher is a capability reference with different conditioning and replica counts.</p>
   <figure>
-    <div class="card"><img src="assets/img/fig_pose_vs_support.png" alt="Two teacher holds rendered from recorded states: crow, where the hands carry the body's weight, and cobra, where the pose matches within 3 cm but the thighs carry 0 newtons and hover millimetres above the floor." loading="lazy"></div>
-    <figcaption>What a pose-only pass hides. (a) Crow: the hands carry the body's weight. (b) Cobra: the pose matches
-      as closely (3&nbsp;cm), but the thighs carry 0&nbsp;N on every frame of all 31 replicas and sit 3&ndash;8&nbsp;mm above the
-      floor.</figcaption>
+    <div class="card"><img src="assets/img/fig_composition.png" alt="Two line plots over the fine-tuning budget: switch-trained runs complete standing flows and keep higher mean success on command plans, while both no-switch runs stay at zero on flows." loading="lazy"></div>
+    <figcaption>Composition during fine-tuning. (a) All-target completion of the five standing flows, whose standing
+      pairings are held out of switch training; both no-switch runs stay at zero. (b) Mean target success over the 19
+      other cross-clip plans. Each line is one run from the shared initial student.</figcaption>
   </figure>
+</section>
 
-  <h3>Own-route scores miss a command regression</h3>
-  <div class="two">
-    <figure style="margin-top:0">
-      <div class="card"><img src="assets/img/fig_scores.png" alt="Left: share of own-route target replicas passing pose alone versus the full rule for teacher and student. Right: across student checkpoints, own-route scores rise while mean success on 19 command plans falls." loading="lazy"></div>
-      <figcaption>(a) Pose-only versus full-rule success on own routes. (b) Across student checkpoints, own-route
-        scores peak where command success is lowest.</figcaption>
-    </figure>
-    <div>
-      <p>Between two later student checkpoints, own-route passing plans rise from 33 to 39 by pose and from 25 to 32
-        with support checks on the same rollouts, while mean success on 19 command plans falls from .583 to .173.
-        Own-route scores, even support-aware, did not predict command following; support-scored command probes can
-        complement them when selecting checkpoints.</p>
-      <div class="callout">The teacher also chains poses taken from different clips into fluid flows that no capture
-        contains, such as downdog, plank, side plank and back, or Lord of the Dance, Warrior&nbsp;III, standing split.
-        They are not reported in the paper; see <a href="#video" data-jump="91">chapter 3 of the video</a>.</div>
-    </div>
-  </div>
+<section>
+  <h2>Following a revision and meeting its deadline</h2>
+  <p>Returning to crow, we vary when the jump to plank is revealed while the crow hold and the 0.30&nbsp;s plank window
+    stay fixed; success requires both. Both switch-trained runs outperform both controls at every reveal time, and the
+    teacher succeeds at every one from its own arrivals. At the latest reveal, success is 11% and 65% against
+    0&ndash;0.4% for the controls. The two seeds fail differently: one increasingly returns to the crow clip's own
+    continuation and stands up, while the other follows the request but can arrive late, so that 79 of its 80
+    failures eventually reach plank, 77 of them only after the window closes.</p>
+  <figure>
+    <div class="card"><img src="assets/img/fig_timing.png" alt="Joint crow-and-plank success against reveal time: the teacher stays at 100 percent, both switch-trained runs stay above both controls, and success falls for later reveals." loading="lazy"></div>
+    <figcaption>Crow-to-plank success by reveal time, measured from crow-hold onset. Success requires keeping the crow
+      and meeting the scheduled plank target. The extended sweep (solid) uses 227 rollouts per reveal time; dotted
+      curves show earlier batches. Shading marks reveals after the crow hold begins.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Accurate poses can leave requested supports unloaded</h2>
+  <p>On familiar routes, the switch-trained students pass on pose alone 14&ndash;16 percentage points more often than
+    on pose and load, close to the initial student; switching does not remove these failures. The teacher shows the
+    same distinction, 97% by pose alone against 78% with loading conditions, and all 248 replicas in its gap miss a
+    requested load. The unloaded supports sit within 2&nbsp;cm of the floor, so a touch test would pass them: in Cobra,
+    the teacher's pose error is 3&nbsp;cm while its requested thighs hover 3&ndash;8&nbsp;mm above the floor and carry no
+    load. The teacher's reward penalizes unwanted loading but never rewards requested support, and its students show
+    the same failures.</p>
+  <figure>
+    <div class="card"><img src="assets/img/fig_support.png" alt="Two teacher holds: in crow the requested hands carry the load; in cobra the pose matches within 3 cm but the requested thighs carry no load." loading="lazy"></div>
+    <figcaption>Pose agreement and requested loading differ. A requested zone passes if it carries at least 5&nbsp;N on
+      at least 90% of hold frames; teal zones pass and amber zones fail. Labels give left&nbsp;/&nbsp;right hold-mean
+      loads (medians over 31 replicas).</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Testbed</h2>
+  <p>Fifty-six motion-capture clips of one performer cover 37 yoga pose families: arm balances, inversions, and
+    single-leg balances whose supports shift among feet, hands, forearms, head, and trunk. The simulated body is
+    rebuilt from the performer's skeleton, the references are repaired against the capture's contact measurements,
+    and a sampling-based optimizer synthesizes five transitions that no clip contains, among crow, handstand, plank,
+    and chaturanga. An offline vision-language reviewer checks contact labels from renders like the one below. A PPO
+    teacher reads two timed full-body goals; a student distilled from it reads five partial pose-and-contact goal slots
+    and passes the goal to its action decoder only through a discrete intent code.</p>
+  <figure>
+    <div class="card"><img src="assets/img/fig_reviewer_render.png" alt="Four renders of one crow hold for the contact reviewer: eye level, from above, from just above the floor, and a close-up under the left hand, with drop lines from parts that hover above the floor." loading="lazy"></div>
+    <figcaption>Four panels of one review packet as the reviewer receives them: a crow hold at eye level, from high
+      above, from a camera 2&nbsp;cm above the floor, and in close-up under the left hand. Drop lines mark parts that
+      hover above the floor; small spheres are the performer's motion-capture markers.</figcaption>
+  </figure>
+  <div class="callout">Beyond the paper's tables, the teacher also chains poses from different clips into fluid flows
+    without returning to standing; see <a href="#video" data-jump="222.9">the fluid-flow chapter of the
+    video</a>.</div>
 </section>
 
 <section class="gallery">
@@ -307,9 +299,9 @@
   <h2>BibTeX</h2>
   <div class="bib">
     <button class="copy" type="button">Copy</button>
-<pre id="bibtext">@misc{kumar2026pose,
-  title        = {Pose Is Not Support: Do Learned Whole-Body Controllers Follow
-                  Revised Support Commands?},
+<pre id="bibtext">@misc{kumar2026goal,
+  title        = {Goal Revisions and Support Failures in Contact-Rich
+                  Whole-Body Skill Composition},
   author       = {Kumar, Visak},
   year         = {2026},
   howpublished = {CoRL 2026 Workshop on Open Problems in Contact-Rich
